@@ -25,10 +25,10 @@ for filename in os.listdir(FAMILY_FOLDER):
 # Initialize face detection cascade classifier
 # face_detect = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 face_detect = cv2.CascadeClassifier(r'C:\Users\mirol\Documents\GitHub\Smart-Home\Face detection\haarcascade_frontalface_default.xml')
-# ser = serial.Serial('COM5',9600)
+ser = serial.Serial('COM9',9600)
 
 # Initialize video capture
-url = 'http://192.168.1.5:8080/video' #ip camera url
+url = 'http://192.168.1.13:8080/video' #ip camera url
 vid = cv2.VideoCapture(url)
 while True:
     ret, frame = vid.read()
@@ -38,7 +38,7 @@ while True:
 
     # Detect faces in the frame
     faces = face_detect.detectMultiScale(frame, 1.3, 5)
-
+    
     for (x, y, w, h) in faces:
         # Extract face ROI
         face_only = frame[y:y + h, x:x + w]
@@ -63,7 +63,8 @@ while True:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(frame, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
                 #send true to arduino
-                # ser.write(bytes('1','utf-8'))
+                ser.write(bytes('1','utf-8'))
+                time.sleep(10)
 
             else:
                 name = "No match"
@@ -71,7 +72,7 @@ while True:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
                 cv2.putText(frame, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
                 #send false to arduino
-                # ser.write(bytes('0','utf-8'))
+                ser.write(bytes('0','utf-8'))
 
                 print("Enter (s) to save image or (d) to delete from databae or (q) to quit: ")
 
